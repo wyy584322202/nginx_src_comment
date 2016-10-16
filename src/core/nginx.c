@@ -235,7 +235,7 @@ main(int argc, char *const *argv)
      * init_cycle->log is required for signal handlers and
      * ngx_process_options()
      */
-	/*临时的ngx_cycle_t变量，存储配置文件路径，没找到在哪里存储的配置文件路径*/
+	/*临时的ngx_cycle_t变量，存储配置文件路径*/
     ngx_memzero(&init_cycle, sizeof(ngx_cycle_t));
     init_cycle.log = log;
     ngx_cycle = &init_cycle;
@@ -359,11 +359,13 @@ main(int argc, char *const *argv)
     }
 
     ngx_use_stderr = 0;
-
+	
     if (ngx_process == NGX_PROCESS_SINGLE) {
+		/*单进程模式*/
         ngx_single_process_cycle(cycle);
 
     } else {
+    	/*master模式*/
         ngx_master_process_cycle(cycle);
     }
 

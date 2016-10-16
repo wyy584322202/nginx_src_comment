@@ -47,21 +47,21 @@ struct ngx_pool_large_s {
 
 
 typedef struct {
-    u_char               *last;
-    u_char               *end;
-    ngx_pool_t           *next;
+    u_char               *last;		//指向内存池中还没有被分配出去的内存的首地址
+    u_char               *end;		//指向内存池中所有内存的尾地址
+    ngx_pool_t           *next;		//当内存池中的内存被分配光，且要继续分配时，就会再创建一个内存池，next指向它
     ngx_uint_t            failed;
 } ngx_pool_data_t;
 
 
 struct ngx_pool_s {
-    ngx_pool_data_t       d;
-    size_t                max;
-    ngx_pool_t           *current;
+    ngx_pool_data_t       d;		//内存池的可使用的内存地址
+    size_t                max;		//从内存池中可以分配的小块内存的最大值，大于max的内存会直接从堆内存中申请
+    ngx_pool_t           *current;	//指向当前使用的内存池
     ngx_chain_t          *chain;
-    ngx_pool_large_t     *large;
-    ngx_pool_cleanup_t   *cleanup;
-    ngx_log_t            *log;
+    ngx_pool_large_t     *large;	//内存池中所有大块内存的链表
+    ngx_pool_cleanup_t   *cleanup;	//需要在内存池销毁时清理掉的内容
+    ngx_log_t            *log;		//内存池操作需要记录日志时的日志对象
 };
 
 

@@ -28,7 +28,7 @@ ngx_strlow(u_char *dst, u_char *src, size_t n)
     }
 }
 
-
+/*将src字符串复制到dst去，没有申请内存，所以使用本函数的前提是两个字符串都有内存*/
 u_char *
 ngx_cpystrn(u_char *dst, u_char *src, size_t n)
 {
@@ -52,12 +52,11 @@ ngx_cpystrn(u_char *dst, u_char *src, size_t n)
     return dst;
 }
 
-
+/*在内存池pool中，申请一块内存，作为src字符串的副本*/
 u_char *
 ngx_pstrdup(ngx_pool_t *pool, ngx_str_t *src)
 {
     u_char  *dst;
-
     dst = ngx_pnalloc(pool, src->len);
     if (dst == NULL) {
         return NULL;

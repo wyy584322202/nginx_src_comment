@@ -63,43 +63,48 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
 
 
     log = old_cycle->log;
-
+	/*创建内存池*/
     pool = ngx_create_pool(NGX_CYCLE_POOL_SIZE, log);
     if (pool == NULL) {
         return NULL;
     }
+	/*使用old_cycle对象的元素来给要创建的cycle赋值*/
     pool->log = log;
-
+	/*从内存池中给cycle对象申请内存*/
     cycle = ngx_pcalloc(pool, sizeof(ngx_cycle_t));
     if (cycle == NULL) {
         ngx_destroy_pool(pool);
         return NULL;
     }
-
+	/*cycle对象的pool指针表明cycle使用的内存池是pool指针指向的内存池*/
     cycle->pool = pool;
+	/*cycle对象的log指针表明cycle对象相关的日志都写到log所指的对象去*/
     cycle->log = log;
+	/*cycle对象的old_cycle指针表示我们使用old_cycle对象里面的元素来给cycle对象赋值*/
     cycle->old_cycle = old_cycle;
-
+	/*给cycle对象的conf_prefix赋值，保存配置文件的路径*/
     cycle->conf_prefix.len = old_cycle->conf_prefix.len;
     cycle->conf_prefix.data = ngx_pstrdup(pool, &old_cycle->conf_prefix);
     if (cycle->conf_prefix.data == NULL) {
         ngx_destroy_pool(pool);
         return NULL;
     }
-
+	/*给cycle对象的prefix赋值，保存nginx的安装路径*/
     cycle->prefix.len = old_cycle->prefix.len;
     cycle->prefix.data = ngx_pstrdup(pool, &old_cycle->prefix);
     if (cycle->prefix.data == NULL) {
         ngx_destroy_pool(pool);
         return NULL;
     }
-
+	/*conf_file可能是配置文件的全路径，conf_prefix是不包括文件名的配置文件全路径*/
+	/*先给conf_file.data申请内存*/
     cycle->conf_file.len = old_cycle->conf_file.len;
     cycle->conf_file.data = ngx_pnalloc(pool, old_cycle->conf_file.len + 1);
     if (cycle->conf_file.data == NULL) {
         ngx_destroy_pool(pool);
         return NULL;
     }
+	/*申请好内存后赋值*/
     ngx_cpystrn(cycle->conf_file.data, old_cycle->conf_file.data,
                 old_cycle->conf_file.len + 1);
 
@@ -110,7 +115,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
         return NULL;
     }
 
-
+	/*申请动态数组容器所需要的内存，存放nginx索要操作的所有文件的路径*/
     n = old_cycle->paths.nelts ? old_cycle->paths.nelts : 10;
 
     cycle->paths.elts = ngx_pcalloc(pool, n * sizeof(ngx_path_t *));
@@ -131,7 +136,9 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
         ngx_destroy_pool(pool);
         return NULL;
     }
-
+	/*更新n的值为old_cycle->open_files这个链表中所有元素的个数，如果old_cycle
+	 *中没有设置这个链表，其中的元素个数为0的话，n=20
+	 */
     if (old_cycle->open_files.part.nelts) {
         n = old_cycle->open_files.part.nelts;
         for (part = old_cycle->open_files.part.next; part; part = part->next) {
@@ -141,7 +148,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
     } else {
         n = 20;
     }
-
+	/*open_files表示nginx已经打开的所有文件*/
     if (ngx_list_init(&cycle->open_files, pool, n, sizeof(ngx_open_file_t))
         != NGX_OK)
     {
@@ -149,7 +156,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
         return NULL;
     }
 
-
+	/*和上面一样，初始化单链表shared_memory*/
     if (old_cycle->shared_memory.part.nelts) {
         n = old_cycle->shared_memory.part.nelts;
         for (part = old_cycle->shared_memory.part.next; part; part = part->next)
@@ -167,7 +174,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
         ngx_destroy_pool(pool);
         return NULL;
     }
-
+	/*初始化listening数组，数组元素是ngx_listening_t类型，表示监听的端口*/
     n = old_cycle->listening.nelts ? old_cycle->listening.nelts : 10;
 
     cycle->listening.elts = ngx_pcalloc(pool, n * sizeof(ngx_listening_t));
@@ -181,17 +188,17 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
     cycle->listening.nalloc = n;
     cycle->listening.pool = pool;
 
-
+	/*reusable_connections_queue双链表容器，表示可以重复使用的连接*/
     ngx_queue_init(&cycle->reusable_connections_queue);
 
-
+	/*conf_ctx保存着存储所有模块配置项的结构体的指针*/
     cycle->conf_ctx = ngx_pcalloc(pool, ngx_max_module * sizeof(void *));
     if (cycle->conf_ctx == NULL) {
         ngx_destroy_pool(pool);
         return NULL;
     }
 
-
+	/*获取主机名*/
     if (gethostname(hostname, NGX_MAXHOSTNAMELEN) == -1) {
         ngx_log_error(NGX_LOG_EMERG, log, ngx_errno, "gethostname() failed");
         ngx_destroy_pool(pool);
@@ -199,7 +206,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
     }
 
     /* on Linux gethostname() silently truncates name that does not fit */
-
+	/*将主机名也保存到cycle对象当中去*/
     hostname[NGX_MAXHOSTNAMELEN - 1] = '\0';
     cycle->hostname.len = ngx_strlen(hostname);
 
@@ -211,7 +218,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
 
     ngx_strlow(cycle->hostname.data, (u_char *) hostname, cycle->hostname.len);
 
-
+	/*将ngx_module_t数组(也就是configure脚本执行的时候自动生成的数组)拷贝一份副本到cycle结构体中*/
     if (ngx_cycle_modules(cycle) != NGX_OK) {
         ngx_destroy_pool(pool);
         return NULL;
@@ -238,7 +245,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
 
     senv = environ;
 
-
+	/*准备解析配置文件*/
     ngx_memzero(&conf, sizeof(ngx_conf_t));
     /* STUB: init array ? */
     conf.args = ngx_array_create(pool, 10, sizeof(ngx_str_t));
@@ -623,6 +630,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
 
     pool->log = cycle->log;
 
+	/*调用所有模块的init_module方法*/
     if (ngx_init_modules(cycle) != NGX_OK) {
         /* fatal */
         exit(1);

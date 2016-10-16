@@ -36,7 +36,7 @@ struct ngx_shm_zone_s {
 
 
 struct ngx_cycle_s {
-    void                  ****conf_ctx;
+    void                  ****conf_ctx;//保存着所有模块存储配置项的结构体的指针
     ngx_pool_t               *pool;
 
     ngx_log_t                *log;
