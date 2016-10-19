@@ -1,7 +1,30 @@
----- NGX_DEFAULT_POOL_SIZE Matches (6 in 5 files) ----
-Ngx_cycle.h (core):#define NGX_CYCLE_POOL_SIZE     NGX_DEFAULT_POOL_SIZE
-Ngx_http.c (http):    ha.temp_pool = ngx_create_pool(NGX_DEFAULT_POOL_SIZE, cf->log);
-Ngx_http_geo_module.c (http\modules):    pool = ngx_create_pool(NGX_DEFAULT_POOL_SIZE, cf->log);
-Ngx_http_geo_module.c (http\modules):    ctx.temp_pool = ngx_create_pool(NGX_DEFAULT_POOL_SIZE, cf->log);
-Ngx_http_map_module.c (http\modules):    pool = ngx_create_pool(NGX_DEFAULT_POOL_SIZE, cf->log);
-Ngx_palloc.h (core):#define NGX_DEFAULT_POOL_SIZE    (16 * 1024)
+---- ngx_hash_t Matches (29 in 18 files) ----
+Ngx_hash.c (core):ngx_hash_find(ngx_hash_t *hash, ngx_uint_t key, u_char *name, size_t len)
+Ngx_hash.h (core):} ngx_hash_t;
+Ngx_hash.h (core):    ngx_hash_t        hash;
+Ngx_hash.h (core):    ngx_hash_t            hash;
+Ngx_hash.h (core):    ngx_hash_t       *hash;
+Ngx_hash.h (core):void *ngx_hash_find(ngx_hash_t *hash, ngx_uint_t key, u_char *name, size_t len);
+Ngx_http.c (http):ngx_http_merge_types(ngx_conf_t *cf, ngx_array_t **keys, ngx_hash_t *types_hash,
+Ngx_http.c (http):    ngx_array_t **prev_keys, ngx_hash_t *prev_types_hash,
+Ngx_http.h (http):    ngx_hash_t *types_hash, ngx_array_t **prev_keys,
+Ngx_http.h (http):    ngx_hash_t *prev_types_hash, ngx_str_t *default_types);
+Ngx_http_addition_filter_module.c (http\modules):    ngx_hash_t    types;
+Ngx_http_charset_filter_module.c (http\modules):    ngx_hash_t                  types;
+Ngx_http_core_module.c (http):ngx_http_test_content_type(ngx_http_request_t *r, ngx_hash_t *types_hash)
+Ngx_http_core_module.h (http):    ngx_hash_t                 headers_in_hash;
+Ngx_http_core_module.h (http):    ngx_hash_t                 variables_hash;
+Ngx_http_core_module.h (http):    ngx_hash_t                 hash;
+Ngx_http_core_module.h (http):    ngx_hash_t    types_hash;
+Ngx_http_core_module.h (http):void *ngx_http_test_content_type(ngx_http_request_t *r, ngx_hash_t *types_hash);
+Ngx_http_fastcgi_module.c (http\modules):    ngx_hash_t                     hash;
+Ngx_http_gzip_filter_module.c (http\modules):    ngx_hash_t           types;
+Ngx_http_proxy_module.c (http\modules):    ngx_hash_t                     hash;
+Ngx_http_scgi_module.c (http\modules):    ngx_hash_t                 hash;
+Ngx_http_ssi_filter_module.c (http\modules):    ngx_hash_t    types;
+Ngx_http_ssi_filter_module.h (http\modules):    ngx_hash_t                hash;
+Ngx_http_sub_filter_module.c (http\modules):    ngx_hash_t                 types;
+Ngx_http_upstream.h (http):    ngx_hash_t                       headers_in_hash;
+Ngx_http_upstream.h (http):    ngx_hash_t                       hide_headers_hash;
+Ngx_http_uwsgi_module.c (http\modules):    ngx_hash_t                 hash;
+Ngx_http_xslt_filter_module.c (http\modules):    ngx_hash_t                 types;

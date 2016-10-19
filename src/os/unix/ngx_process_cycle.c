@@ -35,12 +35,12 @@ ngx_pid_t     ngx_pid;
 sig_atomic_t  ngx_reap;
 sig_atomic_t  ngx_sigio;
 sig_atomic_t  ngx_sigalrm;
-sig_atomic_t  ngx_terminate;
-sig_atomic_t  ngx_quit;
+sig_atomic_t  ngx_terminate;	//强制关闭进程
+sig_atomic_t  ngx_quit;			//优雅地关闭进程
 sig_atomic_t  ngx_debug_quit;
-ngx_uint_t    ngx_exiting;
+ngx_uint_t    ngx_exiting;		//ngx_worker_process_cycle关注的全局标志位
 sig_atomic_t  ngx_reconfigure;
-sig_atomic_t  ngx_reopen;
+sig_atomic_t  ngx_reopen;		//重新打开所有的文件
 
 sig_atomic_t  ngx_change_binary;
 ngx_pid_t     ngx_new_binary;

@@ -27,10 +27,10 @@ ngx_rbtree_insert(ngx_rbtree_t *tree, ngx_rbtree_node_t *node)
     ngx_rbtree_node_t  **root, *temp, *sentinel;
 
     /* a binary tree insert */
-
+	/*二叉查找树的插入*/
     root = (ngx_rbtree_node_t **) &tree->root;
     sentinel = tree->sentinel;
-
+	/*空树的插入，node节点作为树的根节点，然后接上两个哨兵节点*/
     if (*root == sentinel) {
         node->parent = NULL;
         node->left = sentinel;
@@ -40,11 +40,11 @@ ngx_rbtree_insert(ngx_rbtree_t *tree, ngx_rbtree_node_t *node)
 
         return;
     }
-
+	/*新插入的节点初始颜色都是红色*/
     tree->insert(*root, node, sentinel);
 
     /* re-balance tree */
-
+	
     while (node != *root && ngx_rbt_is_red(node->parent)) {
 
         if (node->parent == node->parent->parent->left) {
@@ -319,7 +319,7 @@ ngx_rbtree_delete(ngx_rbtree_t *tree, ngx_rbtree_node_t *node)
     ngx_rbt_black(temp);
 }
 
-
+//左旋转
 static ngx_inline void
 ngx_rbtree_left_rotate(ngx_rbtree_node_t **root, ngx_rbtree_node_t *sentinel,
     ngx_rbtree_node_t *node)
@@ -335,13 +335,13 @@ ngx_rbtree_left_rotate(ngx_rbtree_node_t **root, ngx_rbtree_node_t *sentinel,
 
     temp->parent = node->parent;
 
-    if (node == *root) {
+    if (node == *root) /*旋转的中心是根节点*/{
         *root = temp;
 
-    } else if (node == node->parent->left) {
+    } else if (node == node->parent->left)/*旋转的中心是左节点*/ {
         node->parent->left = temp;
 
-    } else {
+    } else /*旋转的中心是右节点*/{
         node->parent->right = temp;
     }
 
@@ -349,7 +349,7 @@ ngx_rbtree_left_rotate(ngx_rbtree_node_t **root, ngx_rbtree_node_t *sentinel,
     node->parent = temp;
 }
 
-
+/*右旋转*/
 static ngx_inline void
 ngx_rbtree_right_rotate(ngx_rbtree_node_t **root, ngx_rbtree_node_t *sentinel,
     ngx_rbtree_node_t *node)

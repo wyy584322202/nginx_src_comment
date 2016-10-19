@@ -333,36 +333,36 @@ ngx_signal_handler(int signo)
     case NGX_PROCESS_MASTER:
     case NGX_PROCESS_SINGLE:
         switch (signo) {
-
-        case ngx_signal_value(NGX_SHUTDOWN_SIGNAL):
-            ngx_quit = 1;
+		
+        case ngx_signal_value(NGX_SHUTDOWN_SIGNAL)://SIGQUIT,终端退出符
+            ngx_quit = 1;		/*优雅的关闭进程*/						
             action = ", shutting down";
             break;
-
-        case ngx_signal_value(NGX_TERMINATE_SIGNAL):
+		
+        case ngx_signal_value(NGX_TERMINATE_SIGNAL)://SIGTERM,终止
         case SIGINT:
-            ngx_terminate = 1;
+            ngx_terminate = 1;	/*强制关闭进程*/
             action = ", exiting";
             break;
 
-        case ngx_signal_value(NGX_NOACCEPT_SIGNAL):
+        case ngx_signal_value(NGX_NOACCEPT_SIGNAL)://SIGWINCH,终端窗口大小改变
             if (ngx_daemonized) {
                 ngx_noaccept = 1;
                 action = ", stop accepting connections";
             }
             break;
 
-        case ngx_signal_value(NGX_RECONFIGURE_SIGNAL):
+        case ngx_signal_value(NGX_RECONFIGURE_SIGNAL)://SIGHUP,连接断开
             ngx_reconfigure = 1;
             action = ", reconfiguring";
             break;
 
-        case ngx_signal_value(NGX_REOPEN_SIGNAL):
-            ngx_reopen = 1;
+        case ngx_signal_value(NGX_REOPEN_SIGNAL)://SIGUSR1,SIGINFO
+            ngx_reopen = 1;		/*重新打开所有文件*/
             action = ", reopening logs";
             break;
 
-        case ngx_signal_value(NGX_CHANGEBIN_SIGNAL):
+        case ngx_signal_value(NGX_CHANGEBIN_SIGNAL)://SIGUSR2,SIGXCPU
             if (getppid() > 1 || ngx_new_binary > 0) {
 
                 /*

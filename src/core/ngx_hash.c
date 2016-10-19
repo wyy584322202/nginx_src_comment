@@ -8,7 +8,9 @@
 #include <ngx_config.h>
 #include <ngx_core.h>
 
-
+/*key是根据散列方法计算出来的散列关键字，name和len表示实际关键字
+ *返回根据散列关键字和实际关键字确定唯一的键值对的值的首地址(value的首地址)
+ */
 void *
 ngx_hash_find(ngx_hash_t *hash, ngx_uint_t key, u_char *name, size_t len)
 {
@@ -606,7 +608,7 @@ ngx_hash_wildcard_init(ngx_hash_init_t *hinit, ngx_hash_key_t *names,
     return NGX_OK;
 }
 
-
+/*散列方法，默认data是字符串*/
 ngx_uint_t
 ngx_hash_key(u_char *data, size_t len)
 {
@@ -621,7 +623,7 @@ ngx_hash_key(u_char *data, size_t len)
     return key;
 }
 
-
+/*散列方法，默认data是字符串，将字符串转小写后再散列*/
 ngx_uint_t
 ngx_hash_key_lc(u_char *data, size_t len)
 {

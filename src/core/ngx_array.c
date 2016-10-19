@@ -43,7 +43,9 @@ ngx_array_destroy(ngx_array_t *a)
     }
 }
 
-
+/*有可能只扩容一个size，有可能扩容一倍，主要是看pool中array是不是最新申请的(内存连续)
+ *和pool数据区的剩余大小够不够size大小
+ */
 void *
 ngx_array_push(ngx_array_t *a)
 {

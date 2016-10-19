@@ -21,11 +21,11 @@ typedef struct ngx_rbtree_node_s  ngx_rbtree_node_t;
 
 struct ngx_rbtree_node_s {
     ngx_rbtree_key_t       key;
-    ngx_rbtree_node_t     *left;
-    ngx_rbtree_node_t     *right;
-    ngx_rbtree_node_t     *parent;
-    u_char                 color;
-    u_char                 data;
+    ngx_rbtree_node_t     *left;		//左节点
+    ngx_rbtree_node_t     *right;		//右节点
+    ngx_rbtree_node_t     *parent;		//父节点
+    u_char                 color;		//颜色:1红，0黑
+    u_char                 data;		//节点数据，由于太小一般不使用
 };
 
 
@@ -35,12 +35,14 @@ typedef void (*ngx_rbtree_insert_pt) (ngx_rbtree_node_t *root,
     ngx_rbtree_node_t *node, ngx_rbtree_node_t *sentinel);
 
 struct ngx_rbtree_s {
-    ngx_rbtree_node_t     *root;
-    ngx_rbtree_node_t     *sentinel;
-    ngx_rbtree_insert_pt   insert;
+    ngx_rbtree_node_t     *root;		//根节点
+    ngx_rbtree_node_t     *sentinel;	//哨兵节点
+    ngx_rbtree_insert_pt   insert;		//添加元素的函数指针，意味着可以使用不同的方法添加节点
 };
 
-
+//tree是容器的指针
+//s是哨兵节点的指针
+//i是insert方法指针
 #define ngx_rbtree_init(tree, s, i)                                           \
     ngx_rbtree_sentinel_init(s);                                              \
     (tree)->root = s;                                                         \
@@ -50,12 +52,13 @@ struct ngx_rbtree_s {
 
 void ngx_rbtree_insert(ngx_rbtree_t *tree, ngx_rbtree_node_t *node);
 void ngx_rbtree_delete(ngx_rbtree_t *tree, ngx_rbtree_node_t *node);
+/**/
 void ngx_rbtree_insert_value(ngx_rbtree_node_t *root, ngx_rbtree_node_t *node,
     ngx_rbtree_node_t *sentinel);
 void ngx_rbtree_insert_timer_value(ngx_rbtree_node_t *root,
     ngx_rbtree_node_t *node, ngx_rbtree_node_t *sentinel);
 
-
+/*节点方法*/
 #define ngx_rbt_red(node)               ((node)->color = 1)
 #define ngx_rbt_black(node)             ((node)->color = 0)
 #define ngx_rbt_is_red(node)            ((node)->color)

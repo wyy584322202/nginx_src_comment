@@ -14,15 +14,15 @@
 
 
 typedef struct {
-    void             *value;
-    u_short           len;
-    u_char            name[1];
+    void             *value;	//用户自定义的value，可以是任意类型
+    u_short           len;		//key的长度
+    u_char            name[1];	//key的首地址
 } ngx_hash_elt_t;
 
 
 typedef struct {
-    ngx_hash_elt_t  **buckets;
-    ngx_uint_t        size;
+    ngx_hash_elt_t  **buckets;	//第一个槽的地址
+    ngx_uint_t        size;		//散列表中槽的总数
 } ngx_hash_t;
 
 
